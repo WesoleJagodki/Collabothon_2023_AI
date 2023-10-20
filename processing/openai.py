@@ -6,7 +6,7 @@ class ParametersExtractorOpenAI:
             openai.api_key = f.read()
         
         self.system_message_total = "You are a machine that is supposed to extract the following parameters from the document text: \n" \
-                        "1. Total pricetag \n" \
+                        "1. Total price tag \n" \
                         "2. Date of purchase \n" \
                         "3. Location of purchase \n" \
                         "If you cannot find the parameter, please write 'None' \n" \
