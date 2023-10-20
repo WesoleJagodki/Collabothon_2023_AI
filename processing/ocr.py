@@ -45,6 +45,8 @@ class LineExtractor:
         for cluster in lines:
             lines[cluster] = sorted(lines[cluster], key=lambda x: x[1][0])
 
+        # Sort clusters by y coordinate
+        lines = dict(sorted(lines.items(), key=lambda x: x[1][0][1][1]))
 
         txt_lines = []
         for val in lines.values():
