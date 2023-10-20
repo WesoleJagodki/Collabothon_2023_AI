@@ -6,9 +6,9 @@ class ParametersExtractorOpenAI:
             openai.api_key = f.read()
         
         self.system_message_total = "You are a machine that is supposed to extract the following parameters from the document text: \n" \
-                        "1. Total price tag \n" \
-                        "2. Date of purchase \n" \
-                        "3. Location of purchase \n" \
+                        "1. Total price tag (TOTAL_PRICE_TAG) \n" \
+                        "2. Date of purchase (PURCHASE_DATE)) \n" \
+                        "3. Location of purchase(PURCHASE_LOCATION) \n" \
                         "If you cannot find the parameter, please write 'None' \n" \
                         "Please output in two columns using csv format: PARAMETER_NAME, VALUE \n" \
         
