@@ -1,0 +1,21 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=wesoleJagodki
+      - POSTGRES_PASSWORD=forTheWin
+      - POSTGRES_DB=mainDb
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - hackaton
+volumes:
+  pgdata:
+
+networks:
+  hackaton:
+    external:
+      name: hackaton
