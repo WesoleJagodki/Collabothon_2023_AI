@@ -2,9 +2,15 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.gnupg
+.ssh
+.vscode-server
+.bash_history
 
 # C extensions
 *.so
+
+openai_api_key.txt
 
 # Distribution / packaging
 .Python
