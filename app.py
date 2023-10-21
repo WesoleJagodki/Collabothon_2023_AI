@@ -1,4 +1,4 @@
-from app.database import add_transaction
+from app.recommendations import on_new_data
 from app.api_processing import *
 from processing.ocr import LineExtractor
 from processing.openai import ParametersExtractorOpenAI
@@ -20,13 +20,15 @@ def process_receit():
     file = request.files['image']
     img = Image.open(file.stream)
 
-    # LOL ocr lib does not implement pil support so this is pretty crap.
+    # LOL ocr lib does not implement pil support.
     img.save("temp.jpg")
 
     lines = line_extractor.get_lines("temp.jpg")
     content = content_extractor.get_parameters(lines)
 
     process_receit_from_img(USER_ID_IMAGES, content['basic_info'], content['product_list'])
+
+    on_new_data()
 
     return "OK"
 

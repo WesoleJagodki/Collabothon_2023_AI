@@ -29,6 +29,15 @@ def add_purchase(purchase: Purchase, transaction_id: int):
     conn.commit()
     conn.close()
 
+def add_notification(content: str, user_id: int):
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+    cur.execute("INSERT INTO notifications (user_id, content, used_flag) VALUES (%s, %s, 1)", 
+                (user_id, content))
+    conn.commit()
+    conn.close()
+
 def get_all_transactions():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -41,5 +50,21 @@ def get_all_transactions():
         transaction = Transaction(row[0], row[1], row[2], row[3], row[5])
         transaction.transaction_id = row[4]
         objects.append(transaction)
+
+    return objects
+
+def get_all_purchases(transaction_id: int):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM purchases WHERE transaction_id = %s", (transaction_id, ))
+    rows = cur.fetchall()
+    conn.close()
+    
+    objects = []
+    for row in rows:
+        purchase = Purchase(row[1], row[2], row[3], row[4], row[5], row[6])
+        purchase.transaction_id = row[0]
+        purchase.purchase_id = row[7]
+        objects.append(purchase)
 
     return objects
