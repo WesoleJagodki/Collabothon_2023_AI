@@ -1,5 +1,17 @@
 import openai
 
+def _to_float(input: str):
+    try:
+        return float(input)
+    except ValueError as _:
+        return float("nan")
+
+def _to_int(input: str):
+    try:
+        return int(input)
+    except ValueError as _:
+        return 1
+
 class ParametersExtractorOpenAI:
     def __init__(self):
         with open('openai_api_key.txt', 'r') as f:
@@ -21,6 +33,7 @@ class ParametersExtractorOpenAI:
     
     def get_completion(self, system_message, user_input):
         completion = openai.ChatCompletion.create(
+            temperature=0.0,
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system_message},
@@ -35,16 +48,15 @@ class ParametersExtractorOpenAI:
         for line in lines:
             text += line + "\n"
         
-        print(text)
         basic_info = self.get_completion(self.system_message_total, text)
         product_list = self.get_completion(self.system_message_products, text)
         
         basic_info = basic_info.split("\n")[1:]
         basic_info = [x.split(",") for x in basic_info]
-        basic_info = {x[0].lower(): x[1] for x in basic_info}
+        basic_info = {x[0].lower(): x[1].strip() for x in basic_info}
 
         product_list = product_list.split("\n")[1:]
         product_list = [x.split(",") for x in product_list]
-        product_list = [{"product_name": x[0], "product_price": x[1], "product_quantity": x[2]} for x in product_list]
+        product_list = [{"product_name": x[0].strip(), "product_price": _to_float(x[1].strip()), "product_quantity": _to_int(x[2].strip())} for x in product_list]
 
         return {"basic_info": basic_info, "product_list": product_list}

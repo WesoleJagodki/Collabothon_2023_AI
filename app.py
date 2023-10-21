@@ -1,9 +1,11 @@
 from app.database import add_transaction
+from app.api_processing import *
 from processing.ocr import LineExtractor
 from processing.openai import ParametersExtractorOpenAI
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from PIL import Image
 
+USER_ID_IMAGES =  7
 app = Flask(__name__)
 
 content_extractor = ParametersExtractorOpenAI()
@@ -18,21 +20,23 @@ def process_receit():
     file = request.files['image']
     img = Image.open(file.stream)
 
-    lines = line_extractor.extract(img)
-    content = content_extractor.extract(lines)
-    basic_parameters = content['basic_info']
-    products = content['product_list']
-    basic_parameters['TRANSACTION_TYPE'] = "cash"
+    # LOL ocr lib does not implement pil support so this is pretty crap.
+    img.save("temp.jpg")
 
-    add_transaction(basic_parameters, 1)
+    lines = line_extractor.get_lines("temp.jpg")
+    content = content_extractor.get_parameters(lines)
 
-    return 200
+    process_receit_from_img(USER_ID_IMAGES, content['basic_info'], content['product_list'])
+
+    return "OK"
 
 @app.route('/add-transaction', methods=['POST'])
-def process_receit():
+def add_transaction_from_api():
     request_json = request.get_json()
-    add_transaction(request_json["parameters"], request_json["user_id"])
-    return 200
+    
+    process_api_transaction(request_json)
+
+    return "OK"
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0")
