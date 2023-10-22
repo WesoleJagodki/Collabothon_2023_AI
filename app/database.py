@@ -33,10 +33,44 @@ def add_notification(content: str, user_id: int):
     conn = get_db_connection()
 
     cur = conn.cursor()
-    cur.execute("INSERT INTO notifications (user_id, content, used_flag) VALUES (%s, %s, 1)", 
+    cur.execute("INSERT INTO notifications (user_id, content, used_flag) VALUES (%s, %s, false)", 
                 (user_id, content))
     conn.commit()
     conn.close()
+
+def add_goal(goal: Goal):
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+    cur.execute("INSERT INTO goals (user_id, spent_money, category, max_money) VALUES (%s, %s, %s, %s)", 
+                (goal.user_id, goal.spent_money, goal.category, goal.max_money))
+    conn.commit()
+    conn.close()
+
+def update_goal(goal: Goal):
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+    cur.execute("UPDATE goals SET spent_money = %s WHERE goal_id = %s", 
+                (goal.spent_money, goal.goal_id))
+    conn.commit()
+    conn.close()
+
+def get_all_goals():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM goals")
+    rows = cur.fetchall()
+    conn.close()
+    
+    objects = []
+    for row in rows:
+        goal = Goal(row[1], row[2], row[3])
+        goal.max_money = row[4]
+        goal.goal_id = row[0]
+        objects.append(goal)
+
+    return objects
 
 def get_all_transactions():
     conn = get_db_connection()
@@ -47,7 +81,7 @@ def get_all_transactions():
     
     objects = []
     for row in rows:
-        transaction = Transaction(row[0], row[1], row[2], row[3], row[5])
+        transaction = Transaction(row[6], row[0], row[1], row[3], row[4], row[5])
         transaction.transaction_id = row[4]
         objects.append(transaction)
 
