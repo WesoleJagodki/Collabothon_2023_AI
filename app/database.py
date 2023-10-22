@@ -13,9 +13,9 @@ def add_transaction(transaction: Transaction):
     conn = get_db_connection()
 
     cur = conn.cursor()
-    cur.execute("INSERT INTO transactions (user_id, amount, date, location, type) VALUES (%s, %s, %s, %s, %s)", 
+    cur.execute("INSERT INTO transactions (user_id, amount, date, location, type, category) VALUES (%s, %s, %s, %s, %s, %s)", 
                 (transaction.user_id, transaction.amount, transaction.date,
-                 transaction.location, transaction.transaction_type))
+                 transaction.location, transaction.transaction_type, transaction.category))
     conn.commit()
     conn.close()
 
