@@ -23,10 +23,12 @@ class LineExtractor:
     
     def get_lines(self, img):
         dbscan = DBSCAN(eps=self.dbscan_eps, min_samples=self.dbscan_min_samples)
-        result = self.ocr_inference(img, show=False)
+        result = self.ocr_inference(img, show=False, save_vis=True, out_dir=".")
 
         result = result['predictions'][0]
         txts = result['rec_texts']
+        if len(txts) == 0:
+            return []
 
         ceneters = np.array([square_center(polygon) for polygon in result['det_polygons']])
 

@@ -22,7 +22,7 @@ ENV FORCE_CUDA="1"
 RUN pip install -r requirements.txt
 RUN pip install --no-cache-dir -e .
 RUN pip install -r requirements/albu.txt
-RUN pip install flask psycopg2-binary openai
+RUN pip install flask psycopg2-binary openai flask-cors
 
 RUN adduser --disabled-password mckittrick
 

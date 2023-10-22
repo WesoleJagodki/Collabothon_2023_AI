@@ -4,6 +4,13 @@ from .objects import *
 from .categories import get_product_category
 from typing import List
 
+def save_float(x):
+    try :
+        x = float(x)
+    except ValueError as _:
+        return float("nan")
+    return x
+
 def match_purchase_to_transaction(transactions: List[Transaction], date: int, store: str) -> Transaction:
     # Find transactions with the same store and within 1h of the same date.
     for transaction in transactions:
@@ -25,7 +32,7 @@ def process_receit_from_img(user_id, basic_info, product_list):
     transaction = match_purchase_to_transaction(get_all_transactions(), timestamp, store)
 
     if transaction is None:
-        transaction = Transaction(user_id=user_id, location=store, amount=float(basic_info['total_price_tag']),
+        transaction = Transaction(user_id=user_id, location=store, amount=save_float(basic_info['total_price_tag']),
                                   category=get_product_category(store),
                                   transaction_type="cash", date=timestamp)
         add_transaction(transaction)
@@ -39,7 +46,7 @@ def process_receit_from_img(user_id, basic_info, product_list):
     for product in product_list:
         purchase = Purchase(category = get_product_category(store),
                             date=timestamp, store=store,
-                            name=product['product_name'], figure=product['product_price'], amount=float(product['product_quantity']))
+                            name=product['product_name'], figure=product['product_price'], amount=save_float(product['product_quantity']))
         
         add_purchase(purchase, transaction.transaction_id)
 
@@ -47,7 +54,7 @@ def process_api_transaction(request):
     transaction = Transaction(user_id=request['user_id'],
                               location=request['location'],
                               category=get_product_category(request['location']),
-                              amount=float(request['amount']),
+                              amount=save_float(request['amount']),
                               transaction_type=request['transaction_type'],
                               date= request['date'])
     add_transaction(transaction)
